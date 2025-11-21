@@ -208,6 +208,10 @@ void ctrlGetInput(void)
         {
             CONTROL_ClearButton(gamefunc_Shrink_Screen);
             viewResizeView(gViewSize + 1);
+#ifdef _3DFX
+            if (gViewSize > 2)
+                gViewSize = 2;
+#endif
         }
         if (gViewMode == 2 || gViewMode == 4)
         {

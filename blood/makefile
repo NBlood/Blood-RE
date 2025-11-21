@@ -1,8 +1,22 @@
 SRC_DIR = src
 OBJ_DIR = obj
 
+!ifeq appver_exedef BR120FX
+!define _3DFX
+!endif
+!ifeq appver_exedef BP120FX
+!define _3DFX
+!endif
+
+
 #CPPFLAGS = /5r /d3 /i=..\qtools\include;..\helix32;..\audiolib;..\mact;..\smacker
+!ifdef _3DFX
+EXENAME = 3dfx
+CPPFLAGS = /5r /d1 /s /orti /oe=3 /d_3DFX=1 /dAPPVER_EXEDEF=$(appver_exedef)
+!else
+EXENAME = blood
 CPPFLAGS = /5r /d1 /s /orti /oe=3 /dAPPVER_EXEDEF=$(appver_exedef)
+!endif
 TENFLAGS = /4r /d1 /s /orti /oe=3
 CFLAGS = /5r /d2 /orti
 AFLAGS = -ml
@@ -88,10 +102,10 @@ heat3.obj &
 engage.obj &
 choke.obj
 
-all : $(appver_exedef)\blood.exe .symbolic
+all : $(appver_exedef)\$(EXENAME).exe .symbolic
 	@%null
 
-$(appver_exedef)\blood.exe: $(OBJS) tenblood.obj
+$(appver_exedef)\$(EXENAME).exe: $(OBJS) tenblood.obj
 	%make $(appver_exedef)\blood.lnk
 	cd $(appver_exedef)
 	wlink @blood.lnk
@@ -103,10 +117,12 @@ $(appver_exedef)\blood.lnk: makefile
 	%append $^@ opt stack=8192
 	%append $^@ opt static
 	%append $^@ debug all
-	%append $^@ name blood
+	%append $^@ name $(EXENAME)
 	%append $^@ library ..\..\qtools\$(appver_qtools)\qtools.lib
 	%append $^@ library ..\..\helix32\helix.lib
+!ifndef _3DFX
 	%append $^@ library ..\..\build\engine.lib
+!endif
 	%append $^@ library ..\..\mact\mact386.lib
 	%append $^@ library ..\..\audiolib\audio_wf.lib
 	%append $^@ library ..\..\smacker\smack.lib
@@ -116,6 +132,16 @@ $(appver_exedef)\blood.lnk: makefile
 	%append $^@ file ..\..\helix32\hgdx.obj
 	%append $^@ file ..\..\build\mmulti.obj
 	%append $^@ file $(OBJ_DIR)\tenblood.obj
+!ifdef _3DFX
+	%append $^@ library ..\..\3dfx\glide2x.lib
+	%append $^@ library ..\..\3dfx\texus\texus.lib
+	%append $^@ file ..\..\3dfx\acc3dfx.obj
+	%append $^@ file ..\..\3dfx\texcache.obj
+	%append $^@ file ..\..\3dfx\engine.obj
+	%append $^@ file ..\..\3dfx\a.obj
+	%append $^@ file ..\..\3dfx\cache1d.obj
+	%append $^@ file ..\..\3dfx\grab.obj
+!endif
 
 
 .cpp.obj:

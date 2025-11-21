@@ -11,12 +11,14 @@ echo [6] SW Retail  1.11 (23 September 1997)
 echo [7] Registered 1.10
 echo [8] Registered 1.11 (19 August 1997)
 echo [9] Registered 1.11 (23 September 1997)
-echo [A] Registered 1.20 (BLOOD.EXE from 3DFX patch, NOT 3DFX.EXE)
-echo [B] Plasma Pak 1.10
-echo [C] Plasma Pak 1.11 (19 August 1997)
-echo [D] Plasma Pak 1.11 (23 September 1997)
-echo [E] Plasma Pak 1.20 (BLOOD.EXE from 3DFX patch, NOT 3DFX.EXE)
-echo [F] Plasma Pak 1.21 (One Unit Whole Blood)
+echo [A] Registered 1.20
+echo [B] Registered 1.20 (3DFX)
+echo [C] Plasma Pak 1.10
+echo [D] Plasma Pak 1.11 (19 August 1997)
+echo [E] Plasma Pak 1.11 (23 September 1997)
+echo [F] Plasma Pak 1.20
+echo [G] Plasma Pak 1.20 (3DFX)
+echo [H] Plasma Pak 1.21 (One Unit Whole Blood)
 echo.
 echo [0] Cancel and quit
 echo.
@@ -25,15 +27,17 @@ echo along with TASM 3.1.
 echo.
 echo %MSG%
 set MSG=
-choice /S /C:123456789AaBbCcDdEeFf0 /N
+choice /S /C:123456789AaBbCcDdEeFfGgHh0 /N
 echo.
 
-if ERRORLEVEL 22 goto end
-if ERRORLEVEL 20 goto BP121
-if ERRORLEVEL 18 goto BP120
-if ERRORLEVEL 16 goto BP111A
-if ERRORLEVEL 14 goto BP111
-if ERRORLEVEL 12 goto BP110
+if ERRORLEVEL 26 goto end
+if ERRORLEVEL 24 goto BP121
+if ERRORLEVEL 22 goto BP120FX
+if ERRORLEVEL 20 goto BP120
+if ERRORLEVEL 18 goto BP111A
+if ERRORLEVEL 16 goto BP111
+if ERRORLEVEL 14 goto BP110
+if ERRORLEVEL 12 goto BR120FX
 if ERRORLEVEL 10 goto BR120
 if ERRORLEVEL 9 goto BR111A
 if ERRORLEVEL 8 goto BR111
@@ -85,6 +89,10 @@ goto end
 set CHOICE=BR120
 set QTCHOICE=QT111A
 goto end
+:BR120FX
+set CHOICE=BR120FX
+set QTCHOICE=QT111A
+goto end
 :BP110
 set CHOICE=BP110
 set QTCHOICE=QT110
@@ -99,6 +107,10 @@ set QTCHOICE=QT111A
 goto end
 :BP120
 set CHOICE=BP120
+set QTCHOICE=QT111A
+goto end
+:BP120FX
+set CHOICE=BP120FX
 set QTCHOICE=QT111A
 goto end
 :BP121

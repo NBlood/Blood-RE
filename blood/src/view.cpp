@@ -1574,7 +1574,9 @@ void viewResizeView(int size)
     xstep = divscale16(320, xdim);
     ystep = divscale16(200, ydim);
     gViewSize = ClipRange(size, 0, 6);
+#ifndef _3DFX
     if (gViewSize == 0 || gViewSize == 1)
+#endif
     {
         gViewX0 = 0;
         gViewY0 = 0;
@@ -2112,6 +2114,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                 break;
             case 6:
             case 7:
+#ifndef _3DFX
                 if (gDetail >= 4 &&(pTSprite->flags&kSpriteFlag4) == 0)
                 {
                     pTSprite->cstat |= 48;
@@ -2121,6 +2124,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
                         pTSprite->ang = (gGameClock<<3)&2047;
                     }
                 }
+#endif
                 break;
         }
         for (; nAnim > 0; nAnim--)
@@ -2681,6 +2685,8 @@ static void DoLensEffect(void)
     }
 }
 
+extern "C" void convertAndDownloadPalette(void* dlpalette);
+
 static void UpdateDacs(int nPalette)
 {
     static RGB newDAC[256];
@@ -2721,6 +2727,9 @@ static void UpdateDacs(int nPalette)
         memcpy(curDAC, newDAC, 768);
         gSetDACRange(0, 256, (byte*)curDAC);
     }
+#ifdef _3DFX
+    convertAndDownloadPalette(baseDAC);
+#endif
 }
 
 #define TILTBUFFER 4078

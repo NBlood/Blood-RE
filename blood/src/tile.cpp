@@ -40,6 +40,7 @@
 #define LDIFF1 -2
 #endif
 
+#ifndef _3DFX
 extern "C" void loadvoxel(int nVoxel)
 {
     static int nLastVoxel = 0;
@@ -61,6 +62,7 @@ extern "C" void loadvoxel(int nVoxel)
         pVox += nSize;
     }
 }
+#endif
 
 CACHENODE tileNode[kMaxTiles];
 
@@ -127,7 +129,9 @@ int tileInit(BOOL a1, char *a2)
     memset(picanm, 0, sizeof(picanm));
     memset(gotpic, 0, sizeof(gotpic));
     memset(hTileFile, -1, sizeof(hTileFile));
+#ifndef _3DFX
     memset(voxoff, 0, sizeof(voxoff));
+#endif
 
     int v8 = 0;
 
@@ -494,8 +498,10 @@ void tilePreloadTile(int nTile)
             voxelIndex[nTile] = -1;
             picanm[nTile].at3_4 = 0;
         }
+#ifndef _3DFX
         else
             loadvoxel(voxelIndex[nTile]);
+#endif
         break;
     }
     for(; n > 0; n--, nTile += 1 + picanm[nTile].animframes)

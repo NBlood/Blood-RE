@@ -8,7 +8,7 @@ mkdir %CHOICE%
 mkdir %CHOICE%\obj
 set WATINCBAK=%INCLUDE%
 set INCLUDE=%INCLUDE%;..\qtools\include;..\helix32;..\audiolib;..\mact;..\smacker;..\ten\incl
-wmake.exe %CHOICE%\blood.exe "appver_qtools = %QTCHOICE%" "appver_exedef = %CHOICE%"
+wmake.exe "appver_qtools = %QTCHOICE%" "appver_exedef = %CHOICE%"
 set CHOICE=
 set QTCHOICE=
 set INCLUDE=%WATINCBAK%

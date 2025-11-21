@@ -58,9 +58,17 @@ const BLOODVERSION gGameVersion = { 21, 1 };
 #elif APPVER_BLOODREV >= AV_BR_BL120
 char gBuildDate[] = "Mar 18 1998";
 # ifdef PLASMAPAK
+#  ifdef _3DFX
+char gBuildTime[] = "12:21:32";
+#  else
 char gBuildTime[] = "12:16:41";
+#  endif
 # else
+#  ifdef _3DFX
+char gBuildTime[] = "12:11:08";
+#  else
 char gBuildTime[] = "12:07:19";
+#  endif
 # endif
 const BLOODVERSION gGameVersion = { 20, 1 };
 #elif APPVER_BLOODREV >= AV_BR_BL111A

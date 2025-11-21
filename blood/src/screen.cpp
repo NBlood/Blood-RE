@@ -241,6 +241,8 @@ void scrSetupUnfade(void)
     memcpy(fromDAC, baseDAC, sizeof(fromDAC));
 }
 
+extern "C" void convertAndDownloadPalette(void* dlpalette);
+
 void scrFadeAmount(int amount)
 {
     for (int i = 0; i < 256; i++)
@@ -250,6 +252,9 @@ void scrFadeAmount(int amount)
         curDAC[i].blue = interpolate16(fromDAC[i].blue, toRGB.blue, amount);
     }
     gSetDACRange(0, 256, (byte*)curDAC);
+#ifdef _3DFX
+    convertAndDownloadPalette(baseDAC);
+#endif
 }
 
 void scrSetDac(void)
@@ -258,6 +263,9 @@ void scrSetDac(void)
         return;
     if (DacInvalid)
         gSetDACRange(0, 256, (byte*)baseDAC);
+#ifdef _3DFX
+    convertAndDownloadPalette(baseDAC);
+#endif
     DacInvalid = 0;
 }
 

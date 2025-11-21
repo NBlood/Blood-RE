@@ -18,6 +18,7 @@
 #include <conio.h>
 #include <i86.h>
 #include <io.h>
+#include <direct.h>
 #include "typedefs.h"
 #include "build.h"
 #include "debug4g.h"
@@ -69,11 +70,16 @@
 #include "choke.h"
 #include "keyboard.h"
 
+#ifdef _3DFX
+#define MAXALLOC 0x3000000
+#else
+#define MAXALLOC 0x2000000
+#endif
 
 #if APPVER_BLOODREV >= AV_BR_BL111A
-int gMaxAlloc = 0x2000000;
+int gMaxAlloc = MAXALLOC;
 #else
-#define gMaxAlloc 0x2000000
+#define gMaxAlloc MAXALLOC
 #endif
 
 ErrorHandler prevErrorHandler;
@@ -89,7 +95,7 @@ char gUserMapFilename[144];
 BOOL bAddUserMap;
 BOOL char_148EE9;
 
-#if APPVER_BLOODREV >= AV_BR_BL120
+#if APPVER_BLOODREV >= AV_BR_BL120 && !defined(_3DFX)
 BOOL bQuickStart = 1;
 #else
 BOOL bQuickStart;
@@ -421,6 +427,7 @@ void PreloadThingCache(SPRITE *pSprite)
 
 void PreloadTiles(void)
 {
+#ifndef _3DFX
     int i;
     int skyTile = -1;
     memset(gotpic,0,sizeof(gotpic));
@@ -476,6 +483,7 @@ void PreloadTiles(void)
             tilePrecacheTile(skyTile+i);
     }
     netGetPackets();
+#endif
 }
 
 void PreloadCache(void)
@@ -504,10 +512,16 @@ void EndLevel(void)
         Redbook.StopSong();
 }
 
+extern "C" void preCacheBigTextures(void);
+
 void StartLevel(GAMEOPTIONS *gameOptions)
 {
     int i;
     EndLevel();
+#ifdef _3DFX
+    scrSetDac();
+    preCacheBigTextures();
+#endif
     gStartNewGame = 0;
     ready2send = 0;
     if (gDemo.RecordStatus() && gGameStarted)
@@ -521,14 +535,16 @@ void StartLevel(GAMEOPTIONS *gameOptions)
             && gEpisodeInfo[gGameOptions.nEpisode].at8f08[0])
             gGameOptions.uGameFlags |= 4;
         if ((gGameOptions.uGameFlags&4) && !gDemo.PlaybackStatus())
+        {
+#ifdef _3DFX
+            dprintf("Can't play Intro because 3DFX Build");
+#else
             levelPlayIntroScene(gGameOptions.nEpisode);
+#endif
+        }
     }
     else if (gGameOptions.nGameType > GAMETYPE_0 && !(gGameOptions.uGameFlags&1))
     {
-#if 0
-        if (!gDemo.PlaybackStatus())
-        {
-#endif
         gGameOptions.nEpisode = gPacketStartGame.episodeId;
         gGameOptions.nLevel = gPacketStartGame.levelId;
         gGameOptions.nGameType = (GAMETYPE)gPacketStartGame.gameType;
@@ -541,19 +557,6 @@ void StartLevel(GAMEOPTIONS *gameOptions)
             levelAddUserMap(gPacketStartGame.userMapName);
         else
             levelSetupOptions(gGameOptions.nEpisode, gGameOptions.nLevel);
-#if 0
-        }
-#endif
-        ///
-#if 0
-        if (!gDemo.RecordStatus() && !gDemo.PlaybackStatus())
-        {
-            strcpy(buffer, levelGetFilename(gGameOptions.nEpisode, gGameOptions.nLevel));
-            ChangeExtension(buffer, ".DEM");
-            gDemo.Create(buffer);
-        }
-#endif
-        ///
     }
     if (gameOptions->uGameFlags&1)
     {
@@ -866,12 +869,18 @@ void LocalKeys(void)
             {
                 for (int i = 0; 1; i++)
                 {
+#ifdef _3DFX
+                    sprintf(name,"SS%02d0000.TGA",i);
+#else
                     sprintf(name,"SS%02d0000.PCX",i);
+#endif
                     if (access(name, 4) == -1)
                         break;
                 }
             }
+#ifndef _3DFX
             screencapture(name, 0);
+#endif
             break;
         }
         }
@@ -986,7 +995,13 @@ void ProcessFrame(void)
             if (gGameOptions.nGameType == GAMETYPE_0)
             {
                 if (gGameOptions.uGameFlags&8)
+                {
+#ifdef _3DFX
+                    dprintf("Can't play end scene becuase 3DFX build");
+#else
                     levelPlayEndScene(gGameOptions.nEpisode);
+#endif
+                }
                 gGameMenuMgr.Deactivate();
                 gGameMenuMgr.Push(&menuCredits);
             }
@@ -1000,17 +1015,6 @@ void ProcessFrame(void)
             viewResizeView(gViewSize);
         }
     }
-#if 0
-    {
-        static FILE *test;
-        if (!test) test = fopen("test.txt", "w");
-        //SPRITE *pSprite = gPlayer[1].pSprite;
-        SPRITE *pSprite = &sprite[0x42];
-        if (!pSprite)
-            return;
-        fprintf(test, "%i x=%i y=%i z=%i ang=%i zvel=%i aim.dz=%i\n", gFrame, pSprite->x, pSprite->y, pSprite->z, pSprite->ang, zvel[pSprite->index], gPlayer[1].at1be.dz);
-    }
-#endif
 }
 
 void GameErrorHandler(const Error &err)
@@ -1036,10 +1040,18 @@ void BannerToTIO(void)
 #  if APPVER_BLOODREV >= AV_BR_BL121
     sprintf(buffer, "One Unit: WHOLE BLOOD %s [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate);
 #  else
+#    ifdef _3DFX
+    sprintf(buffer, "BLOOD With PLASMA PAK %s [%s] -- 3DFX Voodoo ALPHA", GetVersionString(), gBuildDate);
+#    else
     sprintf(buffer, "BLOOD With PLASMA PAK %s [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate);
+#    endif
 #  endif
 # else
+#  ifdef _3DFX
+    sprintf(buffer, "BLOOD RELEASE %s [%s] [%s] -- 3DFX Voodoo BETA", GetVersionString(), gBuildDate, gBuildTime);
+#  else
     sprintf(buffer, "BLOOD RELEASE %s [%s] [%s] -- DO NOT DISTRIBUTE", GetVersionString(), gBuildDate, gBuildTime);
+#  endif
 # endif
 #else // SHAREWARE
     sprintf(buffer, "BLOOD SHAREWARE %s [%s] -- BLOOD: SPILL SOME!", GetVersionString(), gBuildDate);
@@ -1150,7 +1162,7 @@ void ParseOptions(void)
                 ThrowError(1828+LDIFF1)("Missing argument");
             gMaxAlloc = atoi(OptArgv[0]) << 20;
             if (!gMaxAlloc)
-                gMaxAlloc = 0x2000000;
+                gMaxAlloc = MAXALLOC;
             break;
 #endif
         case 24:
@@ -1315,6 +1327,9 @@ void ParseOptions(void)
 
 void func_86910(void);
 
+extern "C" void initglide();
+extern "C" void terminateGlide();
+
 void main(void)
 {
     CheckIfWindows();
@@ -1326,6 +1341,17 @@ void main(void)
     if (!gExplicitSetup)
         CONFIG_GetSetupFilename();
     CONFIG_ReadSetup();
+#ifdef _3DFX
+    if (gViewSize > 2)
+        gViewSize = 2;
+    mkdir("TX3DFX");
+    if (ScreenMode != 1)
+    {
+        ScreenMode = 1;
+        ScreenWidth = 640;
+        ScreenHeight = 480;
+    }
+#endif
     if (bCustomName)
         strcpy(PlayerName, zCustomName);
     ulong allocMemory = func_A8B50();
@@ -1334,6 +1360,10 @@ void main(void)
     else
         allocMemory = allocMemory -0x20000;
     Resource::heap = new QHeap(allocMemory);
+
+#ifdef _3DFX
+    initglide();
+#endif
 
     strcpy(buffer, UserPath);
     strcat(buffer, "*.map");
@@ -1356,7 +1386,7 @@ void main(void)
 
     sprintf(buffer, "%ld MB Memory Used", allocMemory >> 20);
     tioPrint(buffer);
-#if APPVER_BLOODREV >= AV_BR_BL120
+#if APPVER_BLOODREV >= AV_BR_BL120 && !defined(_3DFX)
 #define MINMEMORY 0x17f8680
 #define MINMEMORYMB 23
 #else
@@ -1378,6 +1408,15 @@ void main(void)
             while (!keyGet()) {};
         }
     }
+
+#ifdef _3DFX
+    tioPrint("");
+    tioPrint("This 3DFX version of Blood is  >>>> ALPHA <<<<");
+    tioPrint("  Please email any problems you find to bloodbugs@lith.com");
+    tioPrint("");
+    tioPrint("Press a key to enter Blood...");
+    while (!keyGet()) {};
+#endif
 
     tioPrint("Initializing Build 3D engine");
     scrInit();
@@ -1493,10 +1532,15 @@ void main(void)
     SetupMenus();
 _RESTART:
     setview(0,0,xdim-1,ydim-1);
+#ifndef _3DFX
     if (!bQuickStart)
         credLogos();
+#endif
     scrSetDac();
 _RESTARTNOLOGO:
+#ifdef _3DFX
+    initglide();
+#endif
     scrSetGameMode(ScreenMode,ScreenWidth,ScreenHeight);
     scrSetGamma(gGamma);
     viewResizeView(gViewSize);
@@ -1526,6 +1570,9 @@ _RESTARTNOLOGO:
     }
     while (!gQuitGame && !gTenQuit)
     {
+#ifdef _3DFX
+        scrSetDac();
+#endif
         if (gRedBookInstalled)
             Redbook.preprocess();
         switch (gInputMode)
@@ -1669,6 +1716,9 @@ _RESTARTNOLOGO:
         }
     }
 #endif
+#ifdef _3DFX
+    terminateGlide();
+#endif
     setvmode(gOldDisplayMode);
     sndTerm();
     timerRemove();
@@ -1698,6 +1748,30 @@ _RESTARTNOLOGO:
     if (char_27B2CC && !gTenQuit && !char_148E29)
         printf("Blood exited the network game because the master computer quit.\n");
 }
+
+#ifdef _3DFX
+extern "C" {
+void* myAlloc(int size);
+void myFree(void* mem);
+void mydprint(char* str);
+};
+
+void* myAlloc(int size)
+{
+    return Resource::heap->Alloc(size);
+}
+
+void myFree(void* mem)
+{
+    Resource::heap->Free(mem);
+}
+
+void mydprint(char* str)
+{
+    dprintf(str);
+}
+
+#endif
 
 class BloodLoadSave : public LoadSave {
 public:

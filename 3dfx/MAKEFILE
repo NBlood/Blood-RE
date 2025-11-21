@@ -1,0 +1,14 @@
+all : cache1d.obj engine.obj a.obj grab.obj texcache.obj acc3dfx.obj
+
+cache1d.obj : cache1d.c pragmas.h
+	wcc386 cache1d /4r /d2
+engine.obj : engine.c build.h pragmas.h ves2.h
+	wcc386 engine /4r /d2
+a.obj : a.c
+	wcc386 a /4r /d2 /i=.
+grab.obj : grab.c
+	wcc386 grab /4r /d2 /i=.
+texcache.obj : texcache.c
+	wcc386 texcache /4r /d2 /i=.
+acc3dfx.obj : acc3dfx.c
+	wcc386 acc3dfx /i=.

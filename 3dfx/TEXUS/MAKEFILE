@@ -1,0 +1,27 @@
+CFLAGS = -w4 -e25 -7 -fp5 -zq -5r -ei -s -otexan -i=.;..
+
+OBJS = &
+3df.obj &
+clamp.obj &
+dequant.obj &
+diffuse.obj &
+mipmap.obj &
+ncc.obj &
+nccnnet.obj &
+pal256.obj &
+ppm.obj &
+quantize.obj &
+read.obj &
+resample.obj &
+rgt.obj &
+texuslib.obj &
+tga.obj &
+util.obj &
+view.obj &
+write.obj
+
+texus.lib: $(OBJS)
+    wlib texus.lib @texus.lnk
+
+.c.obj:
+    wcc386 $(CFLAGS) $[*
