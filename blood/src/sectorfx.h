@@ -20,5 +20,6 @@
 void DoSectorLighting();
 void InitSectorFX(void);
 void DoSectorPanning(void);
+void UndoSectorLighting(void);
 
 #endif

@@ -53,9 +53,13 @@ struct SECTOR {
 enum {
     kSectorStat0 = 1,
     kSectorStat1 = 2,
+    kSectorStat2 = 4,
     kSectorStat3 = 8,
+    kSectorStat4 = 16,
+    kSectorStat5 = 32,
     kSectorStat6 = 64,
-    kSectorStat31 = 32768
+    kSectorStat1_4_5 = 0x34,
+    kSectorStat15 = 32768
 };
 
 struct WALL
@@ -71,12 +75,18 @@ struct WALL
 };
 
 enum {
+    kWallStat0 = 1,
+    kWallStat1 = 2,
     kWallStat2 = 4,
     kWallStat3 = 8,
+    kWallStat3_8 = 0x108,
     kWallStat4 = 16,
     kWallStat5 = 32,
     kWallStat6 = 64,
+    kWallStat7 = 128,
     kWallStat8 = 256,
+    kWallStat9 = 512,
+    kWallStat7_9 = 0x280,
 
     kWallStat14 = 16384,
     kWallStat15 = 32768,
@@ -102,11 +112,15 @@ struct SPRITE
 
 enum {
     kSpriteStat0 = 1,
+    kSpriteStat1 = 2,
+    kSpriteStat2 = 4,
     kSpriteStat3 = 8,
     kSpriteStat5 = 32,
     kSpriteStat6 = 64,
     kSpriteStat7 = 128,
     kSpriteStat8 = 256,
+    kSpriteStat9 = 512,
+    kSpriteStat1_9 = 0x202,
     kSpriteStat13 = 8192,
     kSpriteStat14 = 16384,
     kSpriteStat15 = 32768,
@@ -241,7 +255,7 @@ BOOL cansee(int, int, int, int, int, int, int, int);
 
 extern int hitscangoalx, hitscangoaly;
 
-int hitscan(int, int, int, int, int, int, int, short *, short *, short*, int *, int *, int *, ulong);
+void hitscan(int, int, int, int, int, int, int, short *, short *, short*, int *, int *, int *, ulong);
 
 void getzrange(int, int, int, int, long *, long *, long *, long *, int, ulong);
 
@@ -261,6 +275,9 @@ extern long validmodeydim[];
 extern long validmodecnt;
 
 extern int numpages;
+extern int qsetmode;
+extern int pageoffset;
+extern int ydim16;
 
 extern int yxaspect;
 
@@ -303,6 +320,13 @@ void faketimerhandler(void);
 
 int krand(void);
 
+void printmessage16(char*);
+void setbrightness(char, char*);
+int loadboard(char* filename, long* daposx, long* daposy, long* daposz, short* daang, short* dacursectnum);
+int saveboard(char* filename, long* daposx, long* daposy, long* daposz, short* daang, short* dacursectnum);
+void printext16(int, int, short, short, char*, char);
+void drawline16(int, int, int, int, int);
+
 // mmulti.c
 
 extern short numplayers;
@@ -338,6 +362,67 @@ int mvlineasm4(int, byte*);
 void setupmvlineasm(long);
 #pragma aux setupmvlineasm parm [eax];
 
+
+// editor stuff
+
+extern short asksave;
+extern int vel, svel, angvel;
+extern long posx, posy, posz;
+extern int horiz;
+extern short ang, cursectnum;
+extern char buildkeys[];
+extern int kensplayerheight;
+extern int zmode;
+extern short defaultspritecstat;
+extern short linehighlight;
+extern short highlightcnt;
+extern short pointhighlight;
+extern short highlightsectorcnt;
+extern short highlightsector[];
+extern short searchwall, searchsector, searchstat;
+extern int searchx, searchy;
+extern char somethingintab;
+extern short highlight[];
+extern short tempextra, templotag, tempcstat, temphitag, temppicnum;
+extern char tempvis, tempxrepeat, tempyrepeat, tempshade, temppal;
+extern int zlock;
+extern short searchit;
+extern short gridlock;
+
+void ExtInit(void);
+void ExtUnInit(void);
+void ExtPreCheckKeys(void);
+void ExtAnalyzeSprites(void);
+void ExtCheckKeys(void);
+void ExtLoadMap(const char* mapname);
+void ExtSaveMap(const char* mapname);
+const char* ExtGetSectorCaption(short sectnum);
+const char* ExtGetWallCaption(short wallnum);
+const char* ExtGetSpriteCaption(short spritenum);
+void ExtShowSectorData(short sectnum);
+void ExtShowWallData(short wallnum);
+void ExtShowSpriteData(short spritenum);
+void ExtEditSectorData(short sectnum);
+void ExtEditWallData(short wallnum);
+void ExtEditSpriteData(short spritenum);
+
+void keytimerstuff(void);
+void initkeys(void);
+void uninitkeys(void);
+void inittimer(void);
+void uninittimer(void);
+int initmouse(void);
+void clearmidstatbar16(void);
+int getpointhighlight(int, int);
+int getlinehighlight(int, int);
+void draw2dscreen(int, int, short, int, short);
+void getpoint(int, int, int*, int*);
+short getnumber16(char*, short, int);
+void updatenumsprites(void);
+void overheadeditor(void);
+int nextsectorneighborz(int, int, int, int);
+void fixrepeats(int);
+char changechar(char, long, char, char);
 
 }
 

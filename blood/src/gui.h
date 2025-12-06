@@ -265,5 +265,6 @@ void SetBlinkOn();
 void UpdateBlinkClock(int);
 
 int GetNumberBox(char *, int, int);
+MODAL_RESULT ShowModal(Container* container);
 
 #endif

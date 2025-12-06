@@ -28,6 +28,9 @@ enum {
 extern signed char tileShade[];
 extern short voxelIndex[];
 extern char surfType[kMaxTiles];
+extern int tileIndexCount;
+extern short tileIndex[kMaxTiles];
+
 
 byte *tileLoadTile(int);
 void tilePreloadTile(int nTile);
@@ -37,5 +40,6 @@ void tileTerm(void);
 void scrLoadPalette(void);
 byte* tileAllocTile(int nTile, int x, int y, int ox = 0, int oy = 0);
 byte tileGetSurfType(int hit);
+int tilePick(int nTile, int a2, int a3);
 
 #endif // !_TILE_H_

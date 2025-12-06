@@ -210,7 +210,10 @@ enum {
 };
 
 enum {
-    kMarker6 = 6,
+    kMarker3 = 3,
+    kMarker4,
+    kMarker5,
+    kMarker6,
     kMarker7,
     kMarkerWarpDest,
     kMarker9,
@@ -258,7 +261,11 @@ enum {
 enum {
     kSectorType604 = 604,
     kSectorType612 = 612,
-    kSectorType617 = 617,
+    kSectorType613,
+    kSectorType614,
+    kSectorType615,
+    kSectorType616,
+    kSectorType617,
 };
 
 struct MAPHEADER2 {
@@ -298,13 +305,22 @@ extern ushort gStatCount[kMaxStatus + 1];
 
 int InsertSprite(int nSprite, int nStat);
 void DeleteSprite(int nSprite);
-void dbDeleteXSprite(int nXSprite);
 int ChangeSpriteSect(int nSprite, int nSector);
 int ChangeSpriteStat(int nSprite, int nStatus);
 ushort dbInsertXSprite(int nSprite);
+void dbDeleteXSprite(int nXSprite);
+ushort dbInsertXWall(int nWall);
+void dbDeleteXWall(int nXWall);
+ushort dbInsertXSector(int nSector);
+void dbDeleteXSector(int nXSector);
+void dbXSpriteClean(void);
+void dbXWallClean(void);
+void dbXSectorClean(void);
+void dbInit(void);
 
 ulong dbReadMapCRC(char *pPath);
 
 void dbLoadMap(char *pPath, long *pX, long *pY, long *pZ, short *pAngle, short *pSector, ulong *pCRC);
+void dbSaveMap(char* pPath, long nX, long nY, long nZ, short nAngle, short nSector);
 
 #endif

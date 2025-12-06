@@ -1042,6 +1042,9 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     MAPHEADER mapheader;
     int nSize;
     byte *pData;
+#if MAPEDIT
+    char_1A76C8 = 1;
+#endif
     int nSpriteNum = 0;
     int i;
     ulong nCRC;
@@ -1091,6 +1094,10 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     pData = (byte*)Resource::Alloc(nSize);
     IOBuffer IOBuffer1(nSize, pData);
     memcpy(&header, "BLM\x1a", 4);
+#if MAPEDIT
+    header.version = 0x700;
+    char_1A76C7 = 1;
+#else
     if (char_1A76C8)
     {
         header.version = 0x700;
@@ -1101,6 +1108,7 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
         header.version = 0x603;
         char_1A76C7 = 0;
     }
+#endif
     IOBuffer1.Write(&header, sizeof(header));
     mapheader.at0 = nX;
     mapheader.at4 = nY;
@@ -1109,6 +1117,9 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     mapheader.ate = nSector;
     mapheader.at10 = pskybits;
     mapheader.at12 = gVisibility;
+#if MAPEDIT
+    gSongId = 'ttaM';
+#else
     if (char_1A76C6)
     {
         gSongId = 'ttaM';
@@ -1117,6 +1128,7 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
     {
         gSongId = 0;
     }
+#endif
     mapheader.at16 = gSongId;
     mapheader.at1a = parallaxtype;
     mapheader.at1b = gMapRev;
@@ -1131,6 +1143,9 @@ void dbSaveMap(char *pPath, long nX, long nY, long nZ, short nAngle, short nSect
 #ifdef REGISTERED
     if (char_1A76C8)
     {
+#if MAPEDIT
+        memset(&char_19AE44, 0, sizeof(MAPHEADER2));
+#endif
         strcpy(char_19AE44.at0, "Copyright 1997 Monolith Productions.  All Rights Reserved");
         char_19AE44.at40 = sizeof(XSPRITE);
         char_19AE44.at44 = sizeof(XWALL);

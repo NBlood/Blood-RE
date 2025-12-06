@@ -53,21 +53,33 @@ char gVersionStringBuf[16];
 //char gBuildTime[] = __TIME__;
 #if APPVER_BLOODREV >= AV_BR_BL121
 char gBuildDate[] = "Jul 15 1998";
+#if MAPEDIT
+char gBuildTime[] = "14:43:30";
+#else
 char gBuildTime[] = "14:37:44";
+#endif
 const BLOODVERSION gGameVersion = { 21, 1 };
 #elif APPVER_BLOODREV >= AV_BR_BL120
 char gBuildDate[] = "Mar 18 1998";
 # ifdef PLASMAPAK
-#  ifdef _3DFX
-char gBuildTime[] = "12:21:32";
+#  if MAPEDIT
+char gBuildTime[] = "12:20:43";
 #  else
+#    ifdef _3DFX
+char gBuildTime[] = "12:21:32";
+#    else
 char gBuildTime[] = "12:16:41";
+#    endif
 #  endif
 # else
-#  ifdef _3DFX
-char gBuildTime[] = "12:11:08";
+#  if MAPEDIT
+char gBuildTime[] = "12:19:29";
 #  else
+#    ifdef _3DFX
+char gBuildTime[] = "12:11:08";
+#    else
 char gBuildTime[] = "12:07:19";
+#    endif
 #  endif
 # endif
 const BLOODVERSION gGameVersion = { 20, 1 };
@@ -75,9 +87,17 @@ const BLOODVERSION gGameVersion = { 20, 1 };
 char gBuildDate[] = "Sep 23 1997";
 # ifdef REGISTERED
 #  ifdef PLASMAPAK
+#    if MAPEDIT
+char gBuildTime[] = "13:27:57";
+#    else
 char gBuildTime[] = "13:23:56";
+#    endif
 #  else
+#    if MAPEDIT
+char gBuildTime[] = "13:26:43";
+#    else
 char gBuildTime[] = "13:20:08";
+#    endif
 #  endif
 # else
 #  ifdef SWRETAIL
@@ -91,9 +111,17 @@ const BLOODVERSION gGameVersion = { 11, 1 };
 char gBuildDate[] = "Aug 19 1997";
 # ifdef REGISTERED
 #  ifdef PLASMAPAK
+#    if MAPEDIT
+char gBuildTime[] = "11:46:55";
+#    else
 char gBuildTime[] = "11:42:52";
+#    endif
 #  else
+#    if MAPEDIT
+char gBuildTime[] = "11:45:41";
+#    else
 char gBuildTime[] = "11:39:05";
+#    endif
 #  endif
 # else
 #  ifdef SWRETAIL
@@ -107,9 +135,17 @@ const BLOODVERSION gGameVersion = { 11, 1 };
 char gBuildDate[] = "Aug 12 1997";
 # ifdef REGISTERED
 #  ifdef PLASMAPAK
+#    if MAPEDIT
+char gBuildTime[] = "16:05:44";
+#    else
 char gBuildTime[] = "16:01:44";
+#    endif
 #  else
+#    if MAPEDIT
+char gBuildTime[] = "16:04:32";
+#    else
 char gBuildTime[] = "15:57:55";
+#    endif
 #  endif
 # else
 #  ifdef SWRETAIL

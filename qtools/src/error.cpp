@@ -27,7 +27,7 @@ char *module;
 int line;
 BOOL inHandler;
 char char_3DF0C4[80];
-BOOL char_3DF114;
+BOOL gErrorFlag;
 
 ErrorHandler errSetHandler(ErrorHandler eh)
 {
@@ -52,7 +52,7 @@ void _SetErrorLoc(char *_module, int _line)
 void _ThrowError(char *s, ...)
 {
     char buffer[256];
-    char_3DF114 = TRUE;
+    gErrorFlag = TRUE;
     va_list args;
     va_start(args, s);
     vsprintf(buffer, s, args);
@@ -64,15 +64,15 @@ void _ThrowError(char *s, ...)
     }
 }
 
-char *func_A54D0(void)
+char *getErrorMsg(void)
 {
-    if (char_3DF114)
+    if (gErrorFlag)
         return char_3DF0C4;
     return NULL;
 }
 
-BOOL func_A54F0(void)
+BOOL getErrorFlag(void)
 {
-    return char_3DF114;
+    return gErrorFlag;
 }
 

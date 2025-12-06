@@ -8,14 +8,17 @@ OBJ_DIR = obj
 !define _3DFX
 !endif
 
+!ifndef MAPEDIT
+!define MAPEDIT 0
+!endif
 
 #CPPFLAGS = /5r /d3 /i=..\qtools\include;..\helix32;..\audiolib;..\mact;..\smacker
 !ifdef _3DFX
 EXENAME = 3dfx
-CPPFLAGS = /5r /d1 /s /orti /oe=3 /d_3DFX=1 /dAPPVER_EXEDEF=$(appver_exedef)
+CPPFLAGS = /5r /d1 /s /orti /oe=3 /d_3DFX=1 /dAPPVER_EXEDEF=$(appver_exedef) /dMAPEDIT=$(MAPEDIT)
 !else
 EXENAME = blood
-CPPFLAGS = /5r /d1 /s /orti /oe=3 /dAPPVER_EXEDEF=$(appver_exedef)
+CPPFLAGS = /5r /d1 /s /orti /oe=3 /dAPPVER_EXEDEF=$(appver_exedef) /dMAPEDIT=$(MAPEDIT)
 !endif
 TENFLAGS = /4r /d1 /s /orti /oe=3
 CFLAGS = /5r /d2 /orti
@@ -102,13 +105,33 @@ heat3.obj &
 engage.obj &
 choke.obj
 
-all : $(appver_exedef)\$(EXENAME).exe .symbolic
-	@%null
+EDITOROBJS = &
+bstub.obj &
+globals.obj &
+db.obj &
+screen.obj &
+sectorfx.obj &
+gui.obj &
+replace.obj &
+tile.obj &
+edit2d.obj &
+edit3d.obj &
+gameutil.obj &
+config.obj &
+asstimer.obj &
+sound.obj &
+usrhooks.obj
 
 $(appver_exedef)\$(EXENAME).exe: $(OBJS) tenblood.obj
 	%make $(appver_exedef)\blood.lnk
 	cd $(appver_exedef)
 	wlink @blood.lnk
+	cd ..
+
+$(appver_exedef)\mapedit.exe: $(EDITOROBJS)
+	%make $(appver_exedef)\mapedit.lnk
+	cd $(appver_exedef)
+	wlink @mapedit.lnk
 	cd ..
 
 $(appver_exedef)\blood.lnk: makefile
@@ -142,6 +165,23 @@ $(appver_exedef)\blood.lnk: makefile
 	%append $^@ file ..\..\3dfx\cache1d.obj
 	%append $^@ file ..\..\3dfx\grab.obj
 !endif
+
+$(appver_exedef)\mapedit.lnk: makefile
+	%create $^@
+	%append $^@ opt map
+	%append $^@ opt stack=8192
+	%append $^@ opt static
+	%append $^@ debug all
+	%append $^@ name mapedit
+	%append $^@ library ..\..\qtools\$(appver_qtools)\qtools.lib
+	%append $^@ library ..\..\helix32\helix.lib
+	%append $^@ library ..\..\build\engine.lib
+	%append $^@ library ..\..\mact\mact386.lib
+	%append $^@ library ..\..\audiolib\audio_wf.lib
+    for %i in ($(EDITOROBJS)) do %append $^@ file $(OBJ_DIR)\%i
+	%append $^@ file ..\..\helix32\hgd13.obj
+	%append $^@ file ..\..\helix32\hgdx.obj
+	%append $^@ file ..\..\build\$(appver_buildobj).obj
 
 
 .cpp.obj:

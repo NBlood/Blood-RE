@@ -30,6 +30,7 @@ ulong qrand(void);
 
 ulong func_A8B30(void);
 ulong func_A8B50(void);
+ulong dpmiDetermineMaxRealAlloc(void);
 
 inline int Min(int a, int b)
 {
@@ -101,6 +102,16 @@ inline int DecBy(int a, int b)
     if (q < 0)
         a -= b;
     return a;
+}
+
+inline int IncStep(int a, int b)
+{
+    return (a + b) & (~(b - 1));
+}
+
+inline int DecStep(int a, int b)
+{
+    return (a - 1) & (~(b - 1));
 }
 
 inline int ClipLow(int a, int b)

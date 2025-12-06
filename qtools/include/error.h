@@ -34,6 +34,8 @@ ErrorHandler errSetHandler(ErrorHandler eh);
 
 void _SetErrorLoc(char *,int);
 void _ThrowError(char *,...);
+char* getErrorMsg(void);
+BOOL getErrorFlag(void);
 
 // #define ThrowError _SetErrorLoc(__FILE__,__LINE__), _ThrowError
 #define ThrowError(line) _SetErrorLoc(__FILE__,line), _ThrowError

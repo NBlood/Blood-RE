@@ -2146,7 +2146,7 @@ void viewProcessSprites(int cX, int cY, int cZ)
             pXSector = NULL;
         }
 #endif
-        if ((pSector->ceilingstat&kSectorStat0) && !(pSector->floorstat&kSectorStat31))
+        if ((pSector->ceilingstat&kSectorStat0) && !(pSector->floorstat&kSectorStat15))
         {
             nShade += pSector->ceilingshade+tileShade[pSector->ceilingpicnum];
         }
